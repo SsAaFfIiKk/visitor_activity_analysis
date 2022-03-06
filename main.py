@@ -1,24 +1,28 @@
 import os
+import random
 import shutil
 import uvicorn
 from fastapi.responses import FileResponse
 from fastapi import FastAPI, UploadFile, File
+from fastapi.middleware.cors import CORSMiddleware
 from tools import create_folders, unpack_archive, generate_predict
+
 app = FastAPI()
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
 path_to_storage = "save_data/"
 file_extensions = ["mp4", "avi"]
-
 imgs = os.listdir(path_to_storage)
 
 
 @app.get("/get_img")
-def get_img(index: int):
+def get_img():
+    index = random.randrange(0, len(imgs))
     return FileResponse(os.path.join(path_to_storage, imgs[index]))
 
 
 @app.get("/get_predict")
-def get_preditc():
+def get_predict():
     return generate_predict()
 
 
