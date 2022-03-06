@@ -9,7 +9,7 @@ export default function App() {
         fetch("https://teachingquality.onti.actcognitive.org/get_predict")
             .then(res => res.json())
             .then(out => { setPredict(out); console.log(out) })
-    })
+    }, [])
 
     return (
         <div>
