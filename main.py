@@ -1,7 +1,6 @@
 import os
 import random
 import shutil
-import uvicorn
 from fastapi.responses import FileResponse
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
@@ -41,7 +40,3 @@ def save(file: UploadFile = File(...)):
 
     else:
         return "Загруженный файл не архив"
-
-
-if __name__ == "__main__":
-    uvicorn.run(app)
