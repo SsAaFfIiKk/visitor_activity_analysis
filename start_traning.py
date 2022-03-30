@@ -68,3 +68,6 @@ if __name__ == "__main__":
     optimizer = optim.Adam(params=model_ft.parameters(), lr=0.001, weight_decay=0.001)
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.9)
     history = TrainModel(model_ft, train_loader, test_loader, optimizer, l1loss, scheduler, 10)
+
+    PATH = "./model_new.pth"
+    torch.save(model_ft.state_dict(), PATH)
