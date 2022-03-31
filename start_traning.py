@@ -4,27 +4,29 @@ import random
 import torch.nn as nn
 import torch.optim as optim
 import torchvision.models as models
-from Model import TrainModel, l1loss
+from TrainModel import TrainModel, l1loss
 from Dataloader import ActivityDataset
 from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
 
+
 if __name__ == "__main__":
     model_ft = models.resnet101(pretrained=True)
     num_ftrs = model_ft.fc.in_features
-    device=torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # device = torch.device("cpu")
+    print(device)
 
-    model_ft = model_ft.to(device)
     for name, param in model_ft.named_parameters():
-        if name in ['layer4.1.conv2.weight','layer4.1.bn2.weight', 'layer4.1.bn2.bias']:
+        if name in ['layer4.1.conv2.weight', 'layer4.1.bn2.weight', 'layer4.1.bn2.bias']:
             param.requires_grad = True
         else:
             param.requires_grad = False
 
-    model_ft.fc = nn.Linear(num_ftrs, 5)
-    for name, param in model_ft.named_parameters():
-        print(name, ':', param.requires_grad)
-
+    model_ft.fc = nn.Linear(num_ftrs, 3)
+    model_ft = model_ft.to(device)
+    # for name, param in model_ft.named_parameters():
+    #     print(name, ':', param.requires_grad)
 
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
@@ -45,7 +47,7 @@ if __name__ == "__main__":
                transforms.ToTensor(),
                transforms.Normalize(mean, std)])}
 
-    path_to_dataset = "F:/Python/Data/cv_itmo_classes"
+    path_to_dataset = "F:/Python/Data/classes"
 
     paths_to_images = []
     paths = os.walk(path_to_dataset)
@@ -67,7 +69,7 @@ if __name__ == "__main__":
 
     optimizer = optim.Adam(params=model_ft.parameters(), lr=0.001, weight_decay=0.001)
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.9)
-    history = TrainModel(model_ft, train_loader, test_loader, optimizer, l1loss, scheduler, 10)
+    history = TrainModel(model_ft, train_loader, test_loader, optimizer, l1loss, scheduler, 100, device)
 
     PATH = "./model_new.pth"
     torch.save(model_ft.state_dict(), PATH)

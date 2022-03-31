@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 
 class TrainModel:
-    def __init__(self, model, train_dl, valid_dl, optimizer, certrion, scheduler, num_epochs):
+    def __init__(self, model, train_dl, valid_dl, optimizer, certrion, scheduler, num_epochs, device):
         self.num_epochs = num_epochs
         self.model = model
         self.scheduler = scheduler
@@ -13,6 +13,7 @@ class TrainModel:
         self.valid_dl = valid_dl
         self.optimizer = optimizer
         self.certrion = certrion
+        self.device = device
         self.loss_history = []
         self.best_acc_valid = 0.0
         self.best_wieght = None
@@ -47,22 +48,25 @@ class TrainModel:
         avg_loss = 0.0
         acc = 0.0
         loss = 0.0
-        for i, (x, y) in enumerate(self.train_dl):
-            x, y = x, y
+
+        for data, target in self.train_dl:
+            data = data.to(self.device)
+            target = target.to(self.device)
             # forward
-            pred = self.model(x)
+            pred = self.model(data)
             # loss
-            loss = self.certrion(pred, y)
+            loss = self.certrion(pred, target)
             # backward
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
             # statistics of model training
-            acc += accuracy(pred, y)
-            loss += l1loss(pred, y)
+            acc += accuracy(pred, target)
+            loss += l1loss(pred, target)
             self.loss_history.append(avg_loss)
             # report statistics
             sys.stdout.flush()
+
         sys.stdout.flush()
         return torch.tensor([acc, loss]) / N
 
@@ -73,11 +77,14 @@ class TrainModel:
         acc = 0.0
         loss = 0.
         with torch.no_grad():
-            for i, (x, y) in enumerate(self.valid_dl):
-                x, y = x, y
-                score = self.model(x)
-                acc += accuracy(score, y)
-                loss += l1loss(score, y)
+            for data, target in self.train_dl:
+                data = data.to(self.device)
+                target = target.to(self.device)
+
+                score = self.model(data)
+                acc += accuracy(score, target)
+                loss += l1loss(score, target)
+
         return torch.tensor([acc, loss]) / N
 
 
