@@ -1,42 +1,27 @@
-import os
-import random
-import shutil
-from fastapi.responses import FileResponse
+from tools import Img
+from fastapi.responses import Response
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from tools import create_folders, unpack_archive, generate_predict
+
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
-path_to_storage = "save_data/"
-file_extensions = ["mp4", "avi"]
-imgs = os.listdir(path_to_storage)
+img = Img()
+
+
+@app.post("/upload")
+async def upload(file: UploadFile = File(...)):
+    contents = await file.read()
+    img.data = contents
+    return {"Filename": file.filename}
 
 
 @app.get("/get_img")
 def get_img():
-    index = random.randrange(0, len(imgs))
-    return FileResponse(os.path.join(path_to_storage, imgs[index]))
+    return  Response(content=img.img_bytes, media_type="image/png")
 
 
 @app.get("/get_predict")
 def get_predict():
-    return generate_predict()
-
-
-@app.post("/save_to_analyze")
-def save(file: UploadFile = File(...)):
-    file_name = file.filename
-
-    if file_name.endswith(".zip"):
-        path_to_save = create_folders(path_to_storage, file_name.split(".")[0])
-
-        with open(path_to_save + file_name, "wb") as archive:
-            shutil.copyfileobj(file.file, archive)
-        unpack_archive(file_name, path_to_save, file_extensions)
-
-        return "Архив сохранён"
-
-    else:
-        return "Загруженный файл не архив"
+    return img.predict
