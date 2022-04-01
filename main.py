@@ -1,4 +1,4 @@
-from tools import Img
+from tools import Img, generate_predict
 from fastapi.responses import Response
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,13 +13,16 @@ img = Img()
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
     contents = await file.read()
-    img.data = contents
+    img.img_bytes = contents
+    predict = generate_predict(contents)
+    print(predict)
+    img.predict = predict
     return {"Filename": file.filename}
 
 
 @app.get("/get_img")
 def get_img():
-    return  Response(content=img.img_bytes, media_type="image/png")
+    return Response(content=img.img_bytes, media_type="image/png")
 
 
 @app.get("/get_predict")
