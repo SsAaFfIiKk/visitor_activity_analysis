@@ -5,7 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI()
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_credentials=True, allow_methods=["*"],
+                   allow_headers=["*"])
 
 img = Img()
 
@@ -15,7 +16,6 @@ async def upload(file: UploadFile = File(...)):
     contents = await file.read()
     img.img_bytes = contents
     predict = generate_predict(contents)
-    print(predict)
     img.predict = predict
     return {"Filename": file.filename}
 
