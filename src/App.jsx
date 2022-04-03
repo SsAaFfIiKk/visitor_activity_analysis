@@ -1,22 +1,22 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 
 
 export default function App() {
     const upload_url = "https://dev.exclusive.onti.actcognitive.org/study/upload"
-    const get_img = "https://dev.exclusive.onti.actcognitive.org/study/get_img"
+    const get_img_url = "https://dev.exclusive.onti.actcognitive.org/study/get_img"
     const predict_url = "https://dev.exclusive.onti.actcognitive.org/study/get_predict"
     
     const [selectedImage, setSelectedImage] = useState(null);
-    const [predict, setPredict] = useState("predict")
+    const [predict, setPredict] = useState()
 
     const sendImg =() => {
         const data = new FormData()
         data.append("file", selectedImage)
         fetch(upload_url, { method: "post", body: data })
-        
-        fetch("https://dev.exclusive.onti.actcognitive.org/study/get_predict")
+        setTimeout(1000)
+        fetch(predict_url)
             .then(res => res.json())
-            .then(out => { setPredict(out); console.log(out) })
+            .then(out => setPredict(out))
     }
 
     return (
@@ -30,6 +30,10 @@ export default function App() {
                         sendImg()
                     }}
                 />
+            </div>
+            <div>
+                <img src={get_img_url} alt="Не удалось загрузить">
+                </img>
             </div>
             <div>
                 {predict}
