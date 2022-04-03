@@ -16,7 +16,7 @@ class Classifier:
         weight_path = "./model_new.pth"
         model.load_state_dict(torch.load(weight_path, map_location=device))
         model.to(device).eval()
-        self.labels = get_label = {v:k for k, v in labels.items()}
+        self.labels = {v:k for k, v in labels.items()}
         self.model = model
         self.device = device
         self.tf = transforms.Compose([
@@ -32,6 +32,7 @@ class Classifier:
         img = torch.unsqueeze(img, 0)
         with torch.no_grad():
             result = self.model(img)
+            print(result)
             label = result.argmax(dim=1)
             answer = self.labels[label.sum().item()]
             return answer
