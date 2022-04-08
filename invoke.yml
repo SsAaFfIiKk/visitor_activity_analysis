@@ -1,5 +1,9 @@
+dataset:
+    path_to_dataset: "F:/Python/Data/cv_itmo_classes"
+    train_folder: "train"
+    valid_folder: "val"
+
 model:
-    data_dir : "data"
     name_wndb : 'experiments_1'
     device : 'cuda'
     output_features : 3

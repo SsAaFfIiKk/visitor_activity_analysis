@@ -5,19 +5,13 @@ from pretrained import PretrainedModel
 
 warnings.filterwarnings("ignore")
 
+
 @task
 def train(ctx):
+    model_config = ctx.model
+    dataset_config = ctx.dataset
 
-    config = ctx.model
-    model = PretrainedModel(config.output_features)
-    train_model = Train(config, model)
+    model = PretrainedModel(model_config.output_features)
+    train_model = Train(model_config, dataset_config, model)
+
     train_model.sckorh_train()
-    
-    
-
-
-
-
-    
-
-
