@@ -19,7 +19,7 @@
   - reactjs
 ### Frontend
 Сервис представляет из себя сайт, на который загружается фото и выводится предсказание (laptop,talking,nothing)
-https://teachingquality.onti.actcognitive.org
+https://dev.exclusive.onti.actcognitive.org/study/
 
 <img src=./img/result.jpg> </img>
 
