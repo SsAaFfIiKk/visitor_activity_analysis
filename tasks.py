@@ -9,4 +9,4 @@ warnings.filterwarnings("ignore")
 def start(ctx):
     config = ctx.model
     img.read_config(config)
-    uvicorn.run(app)
+    uvicorn.run(app, host="0.0.0.0", port=8000, root_path="/study")
