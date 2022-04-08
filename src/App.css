@@ -1,0 +1,22 @@
+.image {
+    display: flex;
+    justify-content: center;
+}
+
+.predict {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.upload {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+.uploadStatus {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
