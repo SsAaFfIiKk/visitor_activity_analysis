@@ -2,22 +2,18 @@ import React, { useState, useEffect } from "react";
 import "./App.css"
 
 export default function App() {
-    // const upload_url = "https://dev.exclusive.onti.actcognitive.org/study/upload"
-    // const get_img_url = "https://dev.exclusive.onti.actcognitive.org/study/get_img"
-    // const predict_url = "https://dev.exclusive.onti.actcognitive.org/study/get_predict"
 
     const upload_url = "http://127.0.0.1:8000/upload"
     const get_img_url = "http://127.0.0.1:8000/get_img"
     const predict_url = "http://127.0.0.1:8000/get_predict"
 
     const [uploadStatus, setUploadStatus] = useState("фото не отпралялось")
-    const [predict, setPredict] = useState()
     const [img, setImg] = useState();
+    const [type, setType] = useState("upload");
 
     useEffect(() => {
         fetch(predict_url)
             .then(res => res.json())
-            .then(out => setPredict(out))
         fetchImage();
     }, [uploadStatus])
 
@@ -46,21 +42,46 @@ export default function App() {
         setUploadStatus("фото не отпраялялось")
     };
 
+    let content;
 
-    return (
-        <div>
-            <div className="image">
-                {predict && <img src={img} alt="Не удалось загрузить" />}
-            </div>
-            <div className="predict">
-                Предсказание модели: {predict}
-            </div>
-            <div className="upload">
-                <input type="file" onChange={onImageChange} />
-            </div>
-            <div className="uploadStatus">
-                {uploadStatus}
-            </div>
-        </div>
-    )
+    switch (type) {
+        default:
+        case "upload":
+            content = (
+                <div>
+                    <div className="title">
+                        GI tract Image Segmentation
+                    </div>
+                    <div className="upload">
+                        <div >
+                            <div>
+                                Upload image file for segmentation:
+                            </div>
+                            <input type="file" onChange={onImageChange} />
+                        </div>
+                    </div>
+                    <div className="uploadStatus">
+                        {uploadStatus}
+                    </div>
+                    <div className="mask">
+                        <button onClick={() => { setType("mask") }}>Получить маску</button>
+                    </div>
+                </div>
+            )
+            break
+        case "mask":
+            content = (
+                <div>
+                    <div className="image">
+                        <img src={img} alt="Не удалось загрузить" />
+                    </div>
+                    <div className="back">
+                        <button onClick={() => { setType("upload") }}>Назад</button>
+                    </div>
+                </div>
+            )
+            break
+    }
+
+    return content
 }
